@@ -8,8 +8,8 @@ const foodSchema = new mongoose.Schema({
     fats: { type: Number, required: false }
 });
 
-const foodModel = mongoose.model("Food", foodSchema);
+const FoodModel = mongoose.model("FoodModel", foodSchema);
 
-module.exports = foodModel;
+module.exports = FoodModel;
 
 
