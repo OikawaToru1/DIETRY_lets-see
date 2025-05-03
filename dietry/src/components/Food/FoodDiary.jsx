@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FaPlus, FaUtensils, FaCoffee, FaCarrot, FaCookieBite } from "react-icons/fa"
 import AddFoodItem from "./AddFoodItem"
 
@@ -8,6 +8,15 @@ const FoodDiary = () => {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [showAddFood, setShowAddFood] = useState(false)
   const [selectedMeal, setSelectedMeal] = useState("")
+  const [foodData, setfoodData] = useState([])
+  const [totals, setTotals] = useState({
+    calories: 0,
+    carbs: 0,
+    fat: 0,
+    protein: 0,
+    sodium: 0,
+    sugar: 0,
+  });
 
   // Format date as "Monday, April 21, 2025"
   const formattedDate = currentDate.toLocaleDateString("en-US", {
@@ -53,6 +62,44 @@ const FoodDiary = () => {
     protein: { total: 112, unit: "g" },
     sodium: { total: 2300, unit: "mg" },
     sugar: { total: 84, unit: "g" },
+  }
+  useEffect(()=>{
+    // lavde(probin) check and fetch data from backend with correct route
+    const fetchFoodData = async ()=>{
+      try {
+        const res = await fetch('/api/food-diary')
+        const data = await res.json();
+        setfoodData(data);
+
+        const newTotals = data.reduce(
+          (acc, item) => {
+            acc.calories += item.calories || 0
+            acc.carbs += item.carbs || 0
+            acc.fat += item.fat || 0
+            acc.protein += item.protein || 0
+            acc.sodium += item.sodium || 0
+            acc.sugar += item.sugar || 0
+            return acc
+          },
+          { calories: 0, carbs: 0, fat: 0, protein: 0, sodium: 0, sugar: 0 }
+        )
+        setTotals(newTotals);
+
+      } catch (error) {
+        console.log(`Error`,error);
+        
+      }
+    }
+    fetchFoodData()
+  },[]);
+
+  const remaining = {
+    calories: nutritionalGoals.calories.total - totals.calories,
+    carbs: nutritionalGoals.carbs.total - totals.carbs,
+    fat: nutritionalGoals.fat.total - totals.fat,
+    protein: nutritionalGoals.protein.total - totals.protein,
+    sodium: nutritionalGoals.sodium.total - totals.sodium,
+    sugar: nutritionalGoals.sugar.total - totals.sugar,
   }
 
   return (
@@ -140,12 +187,12 @@ const FoodDiary = () => {
             {/* Empty state for each meal */}
             <div className="grid grid-cols-7 gap-2 text-center text-gray-500 text-sm">
               <div className="col-span-1"></div>
-              <div className="p-2">0</div>
-              <div className="p-2">0</div>
-              <div className="p-2">0</div>
-              <div className="p-2">0</div>
-              <div className="p-2">0</div>
-              <div className="p-2">0</div>
+              <div className="p-2">1</div>
+              <div className="p-2">2</div>
+              <div className="p-2">3</div>
+              <div className="p-2">4</div>
+              <div className="p-2">5</div>
+              <div className="p-2">6</div>
             </div>
           </div>
         ))}
@@ -154,12 +201,12 @@ const FoodDiary = () => {
         <div className="mt-8 border-t pt-4">
           <div className="grid grid-cols-7 gap-2 text-center font-medium">
             <div className="text-left">Totals</div>
-            <div>0</div>
-            <div>0</div>
-            <div>0</div>
-            <div>0</div>
-            <div>0</div>
-            <div>0</div>
+            <div>{totals.calories}</div>
+          <div>{totals.carbs}</div>
+          <div>{totals.fat}</div>
+          <div>{totals.protein}</div>
+          <div>{totals.sodium}</div>
+          <div>{totals.sugar}</div>
           </div>
 
           <div className="grid grid-cols-7 gap-2 text-center font-medium mt-2">
@@ -174,12 +221,12 @@ const FoodDiary = () => {
 
           <div className="grid grid-cols-7 gap-2 text-center font-medium mt-2">
             <div className="text-left">Remaining</div>
-            <div className="text-[#28A745]">{nutritionalGoals.calories.total}</div>
-            <div className="text-[#28A745]">{nutritionalGoals.carbs.total}</div>
-            <div className="text-[#28A745]">{nutritionalGoals.fat.total}</div>
-            <div className="text-[#28A745]">{nutritionalGoals.protein.total}</div>
-            <div className="text-[#28A745]">{nutritionalGoals.sodium.total}</div>
-            <div className="text-[#28A745]">{nutritionalGoals.sugar.total}</div>
+            <div className="text-[#28A745]">{remaining.calories}</div>
+          <div className="text-[#28A745]">{remaining.carbs}</div>
+          <div className="text-[#28A745]">{remaining.fat}</div>
+          <div className="text-[#28A745]">{remaining.protein}</div>
+          <div className="text-[#28A745]">{remaining.sodium}</div>
+          <div className="text-[#28A745]">{remaining.sugar}</div>
           </div>
         </div>
 
