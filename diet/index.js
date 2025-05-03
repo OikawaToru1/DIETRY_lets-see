@@ -11,7 +11,7 @@ const workoutRoutes = require("./routes/workoutRoutes");
 const workoutSessionRoutes = require("./routes/workoutSessionRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const PORT = process.env.PORT || 5000
-
+const foodDiaryRouter = require('./routes/foodDiaryRoutes.js')
 const verifyToken = require("./verifyToken.js");
 
 
@@ -29,6 +29,9 @@ app.use("/api/workouts", workoutRoutes);
 app.use("/api/workout-sessions", workoutSessionRoutes);
 app.use("/api/activities", activityRoutes);
 console.log("Workout session routes mounted!");
+
+// test for using apis to store and fetch dietplan
+app.use("/api/food-diary",foodDiaryRouter)
 
 /**
  * @route POST /register
