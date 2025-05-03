@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { FaSearch, FaTimes } from "react-icons/fa"
+import axios from 'axios'
 
 const AddFoodItem = ({ onClose, mealType }) => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -29,11 +30,22 @@ const AddFoodItem = ({ onClose, mealType }) => {
     setSearchResults(results)
   }
 
-  const handleAddFood = (food) => {
+  const handleAddFood = async (food) => {
     // In a real app, this would add the food to the user's diary
-    console.log(`Adding ${food.name} to ${mealType}`)
+    console.log(`Adding ${food.name} to ${mealType}`);
     // Close the modal after adding
-    onClose()
+
+    try {
+      await axios.post("/api/foodDiary",{
+        mealType,
+        food,
+      })
+      onClose();
+      
+    } catch (error) {
+      console.error("Error adding food:", error)
+    }
+
   }
 
   return (
